@@ -1,6 +1,6 @@
 package br.com.devdojo.springbootessentials.endpoint;
 
-import br.com.devdojo.springbootessentials.error.CustomErrorType;
+import br.com.devdojo.springbootessentials.error.ResourceNotFoundException;
 import br.com.devdojo.springbootessentials.model.Student;
 import br.com.devdojo.springbootessentials.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +28,26 @@ public class StudentEndpoint {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Long id) {
-        Optional<Student> studentOptional = studentDAO.findById(id);
+        verifyIfStudentExists(id);
+        //sucesso, foi encontrado, vamos retornar o objeto
+        return new ResponseEntity<>(studentDAO.findById(id).get(), HttpStatus.OK);
+    }
 
-        if(studentOptional.isPresent()){
-            //sucesso, foi encontrado, vamos retornar o objeto
-            return new ResponseEntity<>(studentOptional.get(), HttpStatus.OK);
-        } else {
-            //erro, nada foi encontrado
-            return new ResponseEntity<>(new CustomErrorType("Student not found"), HttpStatus.NOT_FOUND);
-        }
+    @GetMapping(path = "/findByName/{name}")
+    public ResponseEntity<?> findStudentsByName(@PathVariable String name){
+        return new ResponseEntity<>(studentDAO.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
     }
 
     //criar algo no servidor, ou inserir algo no banco de dados - POST
     @PostMapping
     public ResponseEntity<?> save(@RequestBody Student student) {
-        return new ResponseEntity<>(studentDAO.save(student), HttpStatus.OK);
+        return new ResponseEntity<>(studentDAO.save(student), HttpStatus.CREATED);
     }
 
     //REMOVER algo do servidor - DELETE
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        verifyIfStudentExists(id);
         studentDAO.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -55,7 +55,18 @@ public class StudentEndpoint {
     //atualização nos dados do servidor - PUT
     @PutMapping
     public ResponseEntity<?> update(@RequestBody Student student) {
+        verifyIfStudentExists(student.getId());
         studentDAO.save(student);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //caso não exista, já interrompo a execução
+    private void verifyIfStudentExists(Long id){
+        Optional<Student> studentOptional = studentDAO.findById(id);
+
+        if(!studentOptional.isPresent()){
+            //erro, nada foi encontrado
+            throw new ResourceNotFoundException("Student not found for ID: " + id);
+        }
     }
 }
