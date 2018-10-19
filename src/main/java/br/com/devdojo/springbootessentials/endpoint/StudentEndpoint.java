@@ -2,60 +2,60 @@ package br.com.devdojo.springbootessentials.endpoint;
 
 import br.com.devdojo.springbootessentials.error.CustomErrorType;
 import br.com.devdojo.springbootessentials.model.Student;
-import br.com.devdojo.springbootessentials.util.DateUtil;
+import br.com.devdojo.springbootessentials.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("students")
 public class StudentEndpoint {
 
-    @Autowired
-    private DateUtil dateUtil;
+    private final StudentRepository studentDAO;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> listAll() {
-        return new ResponseEntity<>(Student.studentList, HttpStatus.OK);
+    @Autowired
+    public StudentEndpoint(StudentRepository studentDAO) {
+        this.studentDAO = studentDAO;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable("id") int id) {
-        Student student = new Student();
-        student.setId(id);
+    @GetMapping
+    public ResponseEntity<?> listAll() {
+        return new ResponseEntity<>(studentDAO.findAll(), HttpStatus.OK);
+    }
 
-        int index = Student.studentList.indexOf(student);
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id) {
+        Optional<Student> studentOptional = studentDAO.findById(id);
 
-        //se o index não foi encontrado, então -1
-        if (index == -1) {
+        if(studentOptional.isPresent()){
+            //sucesso, foi encontrado, vamos retornar o objeto
+            return new ResponseEntity<>(studentOptional.get(), HttpStatus.OK);
+        } else {
+            //erro, nada foi encontrado
             return new ResponseEntity<>(new CustomErrorType("Student not found"), HttpStatus.NOT_FOUND);
         }
-        //caso sim seja encontrado, retornamos o objeto da lista estática em studentList
-        return new ResponseEntity<>(Student.studentList.get(index), HttpStatus.OK);
     }
 
     //criar algo no servidor, ou inserir algo no banco de dados - POST
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity<?> save(@RequestBody Student student) {
-        Student.studentList.add(student);
-        return new ResponseEntity<>(student, HttpStatus.OK);
-    }
-
-    /*//atualização nos dados do servidor - PUT
-    @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable("id") int id) {
-
+        return new ResponseEntity<>(studentDAO.save(student), HttpStatus.OK);
     }
 
     //REMOVER algo do servidor - DELETE
-    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable("id") int id) {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        studentDAO.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-    }*/
-
+    //atualização nos dados do servidor - PUT
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody Student student) {
+        studentDAO.save(student);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
