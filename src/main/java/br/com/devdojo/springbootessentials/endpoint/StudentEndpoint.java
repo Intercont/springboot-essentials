@@ -6,6 +6,7 @@ import br.com.devdojo.springbootessentials.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -40,12 +41,26 @@ public class StudentEndpoint {
 
     //criar algo no servidor, ou inserir algo no banco de dados - POST
     @PostMapping
+    @Transactional //indispensavel para que o rollback seja executado em caso de erro e utilizar a engine InnoDB para MySQL
+//    @Transactional(rollbackFor = Exception.class) //Se quiser trabalhar com exceções do tipo Checked (tratar dentro de um try catch), especificar como RollbackFor. Se atentar que possivelmente não fará o rollback automático no DB
     public ResponseEntity<?> save(@RequestBody Student student) {
+        /* TESTE DE ROLLBACK FORÇANDO UMA EXCEÇÃO RUNTIME
+        studentDAO.save(student);
+        studentDAO.save(student);
+        try {
+            if (true) {
+                throw new RuntimeException("Testando a bodega");
+            }
+        } catch (Exception e){
+            System.out.printf("Caiu na exceção");
+        }
+        studentDAO.save(student);*/
         return new ResponseEntity<>(studentDAO.save(student), HttpStatus.CREATED);
     }
 
     //REMOVER algo do servidor - DELETE
     @DeleteMapping(path = "/{id}")
+    @Transactional
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         verifyIfStudentExists(id);
         studentDAO.deleteById(id);
@@ -54,6 +69,7 @@ public class StudentEndpoint {
 
     //atualização nos dados do servidor - PUT
     @PutMapping
+    @Transactional
     public ResponseEntity<?> update(@RequestBody Student student) {
         verifyIfStudentExists(student.getId());
         studentDAO.save(student);
