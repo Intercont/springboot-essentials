@@ -4,11 +4,13 @@ import br.com.devdojo.springbootessentials.error.ResourceNotFoundException;
 import br.com.devdojo.springbootessentials.model.Student;
 import br.com.devdojo.springbootessentials.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -23,8 +25,9 @@ public class StudentEndpoint {
     }
 
     @GetMapping
-    public ResponseEntity<?> listAll() {
-        return new ResponseEntity<>(studentDAO.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> listAll(Pageable pageable) { //pageable para paginar os resultados
+        //exemplo de chamada sem alterar o padrão de 20: http://localhost:8080/students?page=3&size=5
+        return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
@@ -43,7 +46,7 @@ public class StudentEndpoint {
     @PostMapping
     @Transactional //indispensavel para que o rollback seja executado em caso de erro e utilizar a engine InnoDB para MySQL
 //    @Transactional(rollbackFor = Exception.class) //Se quiser trabalhar com exceções do tipo Checked (tratar dentro de um try catch), especificar como RollbackFor. Se atentar que possivelmente não fará o rollback automático no DB
-    public ResponseEntity<?> save(@RequestBody Student student) {
+    public ResponseEntity<?> save(@Valid @RequestBody Student student) {
         /* TESTE DE ROLLBACK FORÇANDO UMA EXCEÇÃO RUNTIME
         studentDAO.save(student);
         studentDAO.save(student);

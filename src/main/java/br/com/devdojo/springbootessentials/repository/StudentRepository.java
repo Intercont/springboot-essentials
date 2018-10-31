@@ -2,10 +2,11 @@ package br.com.devdojo.springbootessentials.repository;
 
 import br.com.devdojo.springbootessentials.model.Student;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface StudentRepository extends CrudRepository<Student, Long> {
+public interface StudentRepository extends PagingAndSortingRepository<Student, Long> { //para paginar os resultados do GET
     //temos varios tipos de consultas já existentes no CrudRepository
     //Mas também podemos adicionar as que quisermos acrescentar aqui e o próprio Spring se encarregará de realizar as queries
     List<Student> findByNameIgnoreCaseContaining(String name);
