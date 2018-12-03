@@ -14,18 +14,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CustomUserDetailService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public CustomUserDetailService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //consultamos se o usuário informado existe, caso não, lançamos excessão
+        //consultamos se o usuário informado existe, caso não, lançamos exceção
         User user = Optional.ofNullable(userRepository.findByUsername(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -33,7 +33,8 @@ public class CustomUserDetailService implements UserDetailsService {
         List<GrantedAuthority> authorityListAdmin = AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN");
         List<GrantedAuthority> authorityListUser = AuthorityUtils.createAuthorityList("ROLE_USER");
 
-        //retornando o usuário do Spring, esperado no retorno deste método
+        //retornando o usuário do Spring, com a authorityList correspondente para o Spring Security , que validará através do @PreAuthorize
+        // (atenção pois é diferente do User criado como entidade)
         return new org.springframework.security.core.userdetails.User(
                 user.getName(),
                 user.getPassword(),

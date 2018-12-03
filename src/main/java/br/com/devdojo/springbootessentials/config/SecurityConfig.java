@@ -1,6 +1,6 @@
 package br.com.devdojo.springbootessentials.config;
 
-import br.com.devdojo.springbootessentials.service.CustomUserDetailService;
+import br.com.devdojo.springbootessentials.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,12 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests() //autorizar
-                .anyRequest().authenticated() //qualquer requisição autenticada
+//                .anyRequest().authenticated() //qualquer requisição autenticada
+                .antMatchers("/*/protected/**").hasRole("USER") //VALIDAÇÃO DAS URLS POR PERFIS DE USUÁRIO
+                .antMatchers("/*/admin/**").hasRole("ADMIN")
                 .and()
                 .httpBasic() //por httpBasic (Basic no Header) (tem outros, formLogin e tal)
                 .and()
@@ -27,13 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Método para autenticação através dos usuários armazenados no DB, usando o customUserDetailService, e desencriptando
+     * Método para autenticação através dos usuários armazenados no DB, usando o customUserDetailsService, e desencriptando
      * @param auth
      * @throws Exception
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     /**

@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("students")
+@RequestMapping("v1")
 public class StudentEndpoint {
 
     private final StudentRepository studentDAO;
@@ -27,13 +27,13 @@ public class StudentEndpoint {
         this.studentDAO = studentDAO;
     }
 
-    @GetMapping
+    @GetMapping(path = "protected/students")
     public ResponseEntity<?> listAll(Pageable pageable) { //pageable para paginar os resultados
         //exemplo de chamada sem alterar o padrão de 20: http://localhost:8080/students?page=3&size=5
         return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "protected/students/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Long id,
                                             @AuthenticationPrincipal UserDetails userDetails) {
         System.out.println(userDetails);
@@ -42,14 +42,15 @@ public class StudentEndpoint {
         return new ResponseEntity<>(studentDAO.findById(id).get(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/findByName/{name}")
+    @GetMapping(path = "protected/students/findByName/{name}")
     public ResponseEntity<?> findStudentsByName(@PathVariable String name){
         return new ResponseEntity<>(studentDAO.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
     }
 
     //criar algo no servidor, ou inserir algo no banco de dados - POST
-    @PostMapping
+    @PostMapping(path = "admin/students")
     @Transactional //indispensavel para que o rollback seja executado em caso de erro e utilizar a engine InnoDB para MySQL
+    @PreAuthorize("hasRole('ADMIN')") //apenas usuários com perfil ADMIN podem inserir dados pela API
 //    @Transactional(rollbackFor = Exception.class) //Se quiser trabalhar com exceções do tipo Checked (tratar dentro de um try catch), especificar como RollbackFor. Se atentar que possivelmente não fará o rollback automático no DB
     public ResponseEntity<?> save(@Valid @RequestBody Student student) {
         /* TESTE DE ROLLBACK FORÇANDO UMA EXCEÇÃO RUNTIME
@@ -67,9 +68,9 @@ public class StudentEndpoint {
     }
 
     //REMOVER algo do servidor - DELETE
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "admin/students/{id}")
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         verifyIfStudentExists(id);
         studentDAO.deleteById(id);
@@ -77,8 +78,9 @@ public class StudentEndpoint {
     }
 
     //atualização nos dados do servidor - PUT
-    @PutMapping
+    @PutMapping(path = "admin/students")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> update(@RequestBody Student student) {
         verifyIfStudentExists(student.getId());
         studentDAO.save(student);
