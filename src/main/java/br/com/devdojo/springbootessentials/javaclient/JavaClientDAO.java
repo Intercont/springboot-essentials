@@ -1,5 +1,6 @@
 package br.com.devdojo.springbootessentials.javaclient;
 
+import br.com.devdojo.springbootessentials.handler.RestResponseExceptionHandler;
 import br.com.devdojo.springbootessentials.model.PageableResponse;
 import br.com.devdojo.springbootessentials.model.Student;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,11 +15,13 @@ public class JavaClientDAO {
     private RestTemplate restTemplate = new RestTemplateBuilder()
             .rootUri("http://localhost:8080/v1/protected/students")
             .basicAuthorization("igor.fraga", "igor.api")
+            .errorHandler(new RestResponseExceptionHandler())
             .build();
 
     private RestTemplate restTemplateAdmin = new RestTemplateBuilder()
             .rootUri("http://localhost:8080/v1/admin/students")
             .basicAuthorization("igor.fraga", "igor.api")
+            .errorHandler(new RestResponseExceptionHandler())
             .build();
 
     public Student findById(long id) {
@@ -45,6 +48,15 @@ public class JavaClientDAO {
         return exchangePost.getBody();
 
     }
+
+    public void update(Student student) {
+        restTemplateAdmin.put("/", student);
+    }
+
+    public void delete(long id) {
+        restTemplateAdmin.delete("/{id}", id);
+    }
+
 
     /**
      * Para criar um Header genérico para o tipo de JSON
