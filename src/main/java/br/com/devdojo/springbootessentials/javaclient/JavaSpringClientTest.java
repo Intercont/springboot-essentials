@@ -22,7 +22,7 @@ public class JavaSpringClientTest {
 //        System.out.println(students);
 
         //Persistindo o novo estudante
-//        System.out.println(dao.save(student));
+        System.out.println(dao.save(student));
 //        System.out.println(dao.listAll());
 
         //Atualizando o estudante
@@ -33,7 +33,7 @@ public class JavaSpringClientTest {
 //        dao.update(student);
 
         //Deletando um valor
-        dao.delete(12L);
+//        dao.delete(12L);
 
 
 

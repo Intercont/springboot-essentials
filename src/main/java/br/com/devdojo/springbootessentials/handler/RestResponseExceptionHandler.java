@@ -23,6 +23,6 @@ public class RestResponseExceptionHandler extends DefaultResponseErrorHandler {
     public void handleError(ClientHttpResponse response) throws IOException {
         System.out.println("Entrou handleError, Status Code: " + response.getStatusCode());
         System.out.println("Entrou handleError, Body: " + IOUtils.toString(response.getBody(), "UTF-8"));
-//        super.handleError(response);
+        super.handleError(response);
     }
 }
