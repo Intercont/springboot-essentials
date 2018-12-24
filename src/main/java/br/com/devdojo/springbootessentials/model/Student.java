@@ -3,6 +3,7 @@ package br.com.devdojo.springbootessentials.model;
 import javax.persistence.Entity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Student extends AbstractEntity {
@@ -10,9 +11,23 @@ public class Student extends AbstractEntity {
     @NotEmpty(message = "Name field is mandatory") //validações, mensagem a ser retornada na resposta de erro
     private String name;
 
-    @Email
     @NotEmpty(message = "Email field is mandatory")
+    @Email
     private String email;
+
+    public Student() {
+    }
+
+    public Student(@NotEmpty Long id, @NotEmpty(message = "Name field is mandatory") String name, @Email @NotEmpty(message = "Email field is mandatory") String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public Student(@NotEmpty(message = "Name field is mandatory") String name, @Email @NotEmpty(message = "Email field is mandatory") String email) {
+        this.name = name;
+        this.email = email;
+    }
 
     public String getName() {
         return name;

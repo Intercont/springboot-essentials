@@ -26,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic() //por httpBasic (Basic no Header) (tem outros, formLogin e tal)
                 .and()
                 .csrf().disable(); //desabilitar a proteção cross site reference forward para testes locais
+
+        //Permitir X-Frame Options para usar o console do H2DB no navegador
+        http.headers().frameOptions().disable();
     }
 
     /**

@@ -10,6 +10,6 @@ public class PasswordEncoder {
     public static void main(String[] args) {
         //MD5, SHA1 e SHA2 estão depreciados, o que se usa neste momento é o BCrypt
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("fernanda.api"));
+        System.out.println(passwordEncoder.encode("api"));
     }
 }

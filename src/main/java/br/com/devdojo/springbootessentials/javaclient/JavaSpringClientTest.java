@@ -15,11 +15,11 @@ public class JavaSpringClientTest {
         JavaClientDAO dao = new JavaClientDAO();
 
         //buscando um id
-//        System.out.println(dao.findById(19));
+//        System.out.println(dao.findById(1));
 
         //Listando todos os estudantes presentes
-//        List<Student> students = dao.listAll();
-//        System.out.println(students);
+        List<Student> students = dao.listAll();
+        System.out.println(students);
 
         //Persistindo o novo estudante
 //        System.out.println(dao.save(student));
@@ -33,7 +33,7 @@ public class JavaSpringClientTest {
 //        dao.update(student);
 
         //Deletando um valor
-        dao.delete(12L);
+//        dao.delete(12L);
 
 
 

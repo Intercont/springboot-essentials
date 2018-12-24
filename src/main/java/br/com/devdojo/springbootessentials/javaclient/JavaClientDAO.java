@@ -14,13 +14,13 @@ public class JavaClientDAO {
 
     private RestTemplate restTemplate = new RestTemplateBuilder()
             .rootUri("http://localhost:8080/v1/protected/students")
-            .basicAuthorization("igor.fraga", "igor.api")
+            .basicAuthorization("igor_fraga", "api")
             .errorHandler(new RestResponseExceptionHandler())
             .build();
 
     private RestTemplate restTemplateAdmin = new RestTemplateBuilder()
             .rootUri("http://localhost:8080/v1/admin/students")
-            .basicAuthorization("igor.fraga", "igor.api")
+            .basicAuthorization("igor_fraga", "api")
             .errorHandler(new RestResponseExceptionHandler())
             .build();
 
