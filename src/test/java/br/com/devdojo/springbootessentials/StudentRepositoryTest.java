@@ -8,15 +8,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.*;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +40,7 @@ public class StudentRepositoryTest {
 
         this.studentRepository.save(student);
         assertThat(student.getId()).isNotNull();
-        assertThat(student.getName()).isEqualTo("Igor");
+        assertThat(student.getUsername()).isEqualTo("Igor");
         assertThat(student.getEmail()).isEqualTo("igor@masterintercont.com");
     }
 
@@ -64,14 +60,14 @@ public class StudentRepositoryTest {
 
         this.studentRepository.save(student1);
 
-        student1.setName("Igostoso");
+        student1.setUsername("Igostoso");
         student1.setEmail("intercrack@masterintercont.com");
 
         //assim validamos o que vem do que foi persistido
         this.studentRepository.save(student1);
         student1 = this.studentRepository.findById(student1.getId()).get();
 
-        assertThat(student1.getName()).isEqualTo("Igostoso");
+        assertThat(student1.getUsername()).isEqualTo("Igostoso");
         assertThat(student1.getEmail()).isEqualTo("intercrack@masterintercont.com");
     }
 
@@ -83,7 +79,7 @@ public class StudentRepositoryTest {
         this.studentRepository.save(student1);
         this.studentRepository.save(student2);
 
-        List<Student> studentList = this.studentRepository.findByNameIgnoreCaseContaining("igor");
+        List<Student> studentList = this.studentRepository.findByUsernameIgnoreCaseContaining("igor");
 
         assertThat(studentList.size()).isEqualTo(2);
 
@@ -124,7 +120,7 @@ public class StudentRepositoryTest {
         thrown.expect(ConstraintViolationException.class);
 
         Student student = new Student();
-//        student.setName("Igor");
+//        student.setUsername("Igor");
 //        student.setEmail("igorsada@df.com");
 
         this.studentRepository.save(student);

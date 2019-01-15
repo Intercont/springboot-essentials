@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * O objetivo desta classe é retornar um objeto de Usuário com a lista de Permissões que dado
+ * usuário possui no Sistema, que validará através de @PreAuthorize o que o mesmo pode acessar
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -36,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         //retornando o usuário do Spring, com a authorityList correspondente para o Spring Security , que validará através do @PreAuthorize
         // (atenção pois é diferente do User criado como entidade)
         return new org.springframework.security.core.userdetails.User(
-                user.getName(),
+                user.getUsername(),
                 user.getPassword(),
                 user.isAdmin() ? authorityListAdmin : authorityListUser); //ternário, se for admin, envia a lista admin, se não, lista user
 

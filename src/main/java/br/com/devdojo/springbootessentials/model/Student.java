@@ -3,13 +3,12 @@ package br.com.devdojo.springbootessentials.model;
 import javax.persistence.Entity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Student extends AbstractEntity {
 
     @NotEmpty(message = "Name field is mandatory") //validações, mensagem a ser retornada na resposta de erro
-    private String name;
+    private String username;
 
     @NotEmpty(message = "Email field is mandatory")
     @Email
@@ -18,23 +17,23 @@ public class Student extends AbstractEntity {
     public Student() {
     }
 
-    public Student(@NotEmpty Long id, @NotEmpty(message = "Name field is mandatory") String name, @Email @NotEmpty(message = "Email field is mandatory") String email) {
+    public Student(@NotEmpty Long id, @NotEmpty(message = "Name field is mandatory") String username, @Email @NotEmpty(message = "Email field is mandatory") String email) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.email = email;
     }
 
-    public Student(@NotEmpty(message = "Name field is mandatory") String name, @Email @NotEmpty(message = "Email field is mandatory") String email) {
-        this.name = name;
+    public Student(@NotEmpty(message = "Name field is mandatory") String username, @Email @NotEmpty(message = "Email field is mandatory") String email) {
+        this.username = username;
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -48,7 +47,7 @@ public class Student extends AbstractEntity {
     @Override
     public String toString() {
         return "Student{" +
-                "name='" + name + '\'' +
+                "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

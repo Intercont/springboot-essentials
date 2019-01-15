@@ -8,7 +8,7 @@ public class JavaSpringClientTest {
     public static void main(String[] args) {
 
         Student student = new Student();
-//        student.setName("Don Igone");
+//        student.setUsername("Don Igone");
 //        student.setEmail("igone@bigbig.com");
 
         //Objeto que interatua com a API
@@ -26,7 +26,7 @@ public class JavaSpringClientTest {
 //        System.out.println(dao.listAll());
 
         //Atualizando o estudante
-//        student.setName("Don Igone Penne");
+//        student.setUsername("Don Igone Penne");
 //        student.setEmail("igone.penne@bigbig.com");
 //        student.setId(12L);
 //

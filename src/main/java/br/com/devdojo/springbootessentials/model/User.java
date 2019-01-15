@@ -17,10 +17,10 @@ public class User extends AbstractEntity {
     @Column(unique = true)
     private String username;
     @NotEmpty
-    @JsonIgnore //para que seja ignorado e não seja incluído no JSON de retorno
+//    @JsonIgnore //para que seja ignorado e não seja incluído no JSON de retorno
     private String password;
-    @NotEmpty
-    private String name;
+//    @NotEmpty
+//    private String name;
     @NotEmpty
     private boolean admin;
 
@@ -40,13 +40,13 @@ public class User extends AbstractEntity {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
     public boolean isAdmin() {
         return admin;

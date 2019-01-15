@@ -42,9 +42,9 @@ public class StudentEndpoint {
         return new ResponseEntity<>(studentDAO.findById(id).get(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "protected/students/findByName/{name}")
-    public ResponseEntity<?> findStudentsByName(@PathVariable String name){
-        return new ResponseEntity<>(studentDAO.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
+    @GetMapping(path = "protected/students/findByName/{username}")
+    public ResponseEntity<?> findStudentsByUsername(@PathVariable String username){
+        return new ResponseEntity<>(studentDAO.findByUsernameIgnoreCaseContaining(username), HttpStatus.OK);
     }
 
     //criar algo no servidor, ou inserir algo no banco de dados - POST

@@ -81,7 +81,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 //                .status(HttpStatus.BAD_REQUEST.value())
 //                .title("Message not Readable, wrong format, custom by Igor")
 //                .detail(hmnrException.getMessage())
-//                .developerMessage(hmnrException.getClass().getName())
+//                .developerMessage(hmnrException.getClass().getUsername())
 //                .build();
 //
 //        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);

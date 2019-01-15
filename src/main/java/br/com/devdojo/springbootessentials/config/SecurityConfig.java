@@ -2,12 +2,15 @@ package br.com.devdojo.springbootessentials.config;
 
 import br.com.devdojo.springbootessentials.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import static br.com.devdojo.springbootessentials.config.SecurityConstants.SIGN_IN_URL;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) //para que funcionem as ROLES através da anotação @PreAuthorize
@@ -16,20 +19,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.authorizeRequests() //autorizar
+////                .anyRequest().authenticated() //qualquer requisição autenticada
+//                .antMatchers("/*/protected/**").hasRole("USER") //VALIDAÇÃO DAS URLS POR PERFIS DE USUÁRIO
+//                .antMatchers("/*/admin/**").hasRole("ADMIN")
+//                .and()
+//                .httpBasic() //por httpBasic (Basic no Header) (tem outros, formLogin e tal)
+//                .and()
+//                .csrf().disable(); //desabilitar a proteção cross site reference forward para testes locais
+//
+//        //Permitir X-Frame Options para usar o console do H2DB no navegador
+//        http.headers().frameOptions().disable();
+//    }
+
+    /**
+     * Trabalhando com segurança por Token JWT
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests() //autorizar
-//                .anyRequest().authenticated() //qualquer requisição autenticada
+        http.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.GET, SIGN_IN_URL).permitAll() //desabilitar a validação Cross-Site
                 .antMatchers("/*/protected/**").hasRole("USER") //VALIDAÇÃO DAS URLS POR PERFIS DE USUÁRIO
                 .antMatchers("/*/admin/**").hasRole("ADMIN")
                 .and()
-                .httpBasic() //por httpBasic (Basic no Header) (tem outros, formLogin e tal)
-                .and()
-                .csrf().disable(); //desabilitar a proteção cross site reference forward para testes locais
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), customUserDetailsService));
 
         //Permitir X-Frame Options para usar o console do H2DB no navegador
         http.headers().frameOptions().disable();
     }
+
 
     /**
      * Método para autenticação através dos usuários armazenados no DB, usando o customUserDetailsService, e desencriptando
