@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
 
 import static br.com.devdojo.springbootessentials.config.SecurityConstants.SIGN_IN_URL;
 
@@ -41,7 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()) //desbloqueio geral de Cors (Cross-Origin Request, quando as requisições tem origem em domínios diferentes)
+                .and().csrf().disable()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.GET, SIGN_IN_URL).permitAll() //desabilitar a validação Cross-Site
                 .antMatchers("/*/protected/**").hasRole("USER") //VALIDAÇÃO DAS URLS POR PERFIS DE USUÁRIO
                 .antMatchers("/*/admin/**").hasRole("ADMIN")

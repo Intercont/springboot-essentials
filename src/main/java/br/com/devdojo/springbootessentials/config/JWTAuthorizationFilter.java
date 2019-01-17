@@ -58,7 +58,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
         //caso tenha usuário, retorno um novo usuário com a lista de permissões do mesmo
         return username != null ? new UsernamePasswordAuthenticationToken(
-                username,
+                userDetails, //passando um objeto no lugar da String, o mesmo é recebido no Authentication da chamada do Endpoint, no getStudentById
                 null,
                 userDetails.getAuthorities())
                 : null;

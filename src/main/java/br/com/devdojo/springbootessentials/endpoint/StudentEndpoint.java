@@ -3,11 +3,15 @@ package br.com.devdojo.springbootessentials.endpoint;
 import br.com.devdojo.springbootessentials.error.ResourceNotFoundException;
 import br.com.devdojo.springbootessentials.model.Student;
 import br.com.devdojo.springbootessentials.repository.StudentRepository;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +32,11 @@ public class StudentEndpoint {
     }
 
     @GetMapping(path = "protected/students")
+    @ApiOperation(value = "Return a list with all Students", response = Student.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer token", //para o Swagger solicitar o Token obrigatóriamente para realizar as requisições
+                    required = true, dataType = "string", paramType = "header") //criada uma config global no SwaggerConfig.java para que não se tenha a necessidade de criar isto em todos os Endpoints
+    })
     public ResponseEntity<?> listAll(Pageable pageable) { //pageable para paginar os resultados
         //exemplo de chamada sem alterar o padrão de 20: http://localhost:8080/students?page=3&size=5
         return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
@@ -35,8 +44,8 @@ public class StudentEndpoint {
 
     @GetMapping(path = "protected/students/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Long id,
-                                            @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println(userDetails);
+                                            Authentication authentication) { //substituindo o userDetails pelo authentication já que a autenticação foi alterada para o modo Token
+        System.out.println(authentication);
         verifyIfStudentExists(id);
         //sucesso, foi encontrado, vamos retornar o objeto
         return new ResponseEntity<>(studentDAO.findById(id).get(), HttpStatus.OK);

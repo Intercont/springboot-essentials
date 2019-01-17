@@ -57,6 +57,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) //VALIDADE duração do Token = Data atual em Milisegundos + o periodo de UM DIA em Milisegundos
                 .signWith(SignatureAlgorithm.HS512, SECRET) //criptografa com o HS512 e a senha que definimos
                 .compact();
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+        String bearerToken = TOKEN_PREFIX + token;
+        response.getWriter().write(bearerToken); //adicionando o Token também no Body
+        response.addHeader(HEADER_STRING, bearerToken);
     }
 }
